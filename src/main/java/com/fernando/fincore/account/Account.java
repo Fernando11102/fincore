@@ -17,6 +17,13 @@ public class Account {
     public BigDecimal getBalance() {
         return balance;
     }
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
+    }
     public void deposit(BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Deposit amount must be greater than zero");
