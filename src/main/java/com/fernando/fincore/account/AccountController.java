@@ -13,29 +13,29 @@ import java.util.List;
 @RequestMapping("/api/accounts")
 public class AccountController {
 
+
+    private final AccountService accountService;
+
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
     @GetMapping
     public List<Account> getAccounts() {
-
-        Account currentAccount =
-                new Account("FC100001", AccountType.CURRENT);
-
-        Account savingsAccount =
-                new Account("FC100002", AccountType.SAVINGS);
-
-        return List.of(currentAccount, savingsAccount);
+        return accountService.getAccounts();
     }
     @GetMapping("/{accountNumber}")
     public Account getAccount(@PathVariable String accountNumber) {
 
-        return getAccounts()
-                .stream()
-                .filter(account -> account.getAccountNumber().equals(accountNumber))
-                .findFirst()
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Account not found"
-                        )
-                );
+        Account account = accountService.getAccount(accountNumber);
+
+        if (account == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Account not found"
+            );
+        }
+
+        return account;
     }
 }
