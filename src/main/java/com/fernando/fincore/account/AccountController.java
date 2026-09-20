@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -33,6 +37,22 @@ public class AccountController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     "Account not found"
+            );
+        }
+
+        return account;
+    }
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account createAccount(
+            @Valid @RequestBody CreateAccountRequest request) {
+
+        Account account = accountService.createAccount(request);
+
+        if (account == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Account already exists"
             );
         }
 
