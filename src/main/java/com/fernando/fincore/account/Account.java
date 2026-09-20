@@ -1,13 +1,28 @@
 package com.fernando.fincore.account;
 
-import java.math.BigDecimal;
+import jakarta.persistence.Entity;
 
+import java.math.BigDecimal;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+
+
+@Entity
 public class Account {
 
+    @Id
     private String accountNumber;
+
+    @Enumerated(EnumType.STRING)
     private AccountType accountType;
+
     private BigDecimal balance;
 
+
+    protected Account() {
+    }
 
     public Account(String accountNumber, AccountType accountType) {
         this.accountNumber = accountNumber;
