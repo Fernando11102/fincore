@@ -58,4 +58,52 @@ public class AccountController {
 
         return account;
     }
+
+    @PostMapping("/{accountNumber}/deposit")
+    public Account deposit(
+            @PathVariable String accountNumber,
+            @Valid @RequestBody MoneyRequest request) {
+
+        Account account = accountService.deposit(
+                accountNumber,
+                request.amount()
+        );
+
+        if (account == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Account not found"
+            );
+        }
+
+        return account;
+    }
+
+    @PostMapping("/{accountNumber}/withdraw")
+    public Account withdraw(
+            @PathVariable String accountNumber,
+            @Valid @RequestBody MoneyRequest request) {
+
+        try {
+            Account account = accountService.withdraw(
+                    accountNumber,
+                    request.amount()
+            );
+
+            if (account == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Account not found"
+                );
+            }
+
+            return account;
+
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    exception.getMessage()
+            );
+        }
+    }
 }

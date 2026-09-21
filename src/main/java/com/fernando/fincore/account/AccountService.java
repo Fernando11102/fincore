@@ -3,6 +3,7 @@ package com.fernando.fincore.account;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 @Service
 public class AccountService {
@@ -30,6 +31,32 @@ public class AccountService {
                 request.accountNumber(),
                 request.accountType()
         );
+
+        return accountRepository.save(account);
+    }
+    public Account deposit(String accountNumber, BigDecimal amount) {
+
+        Account account = accountRepository.findById(accountNumber)
+                .orElse(null);
+
+        if (account == null) {
+            return null;
+        }
+
+        account.deposit(amount);
+
+        return accountRepository.save(account);
+    }
+    public Account withdraw(String accountNumber, BigDecimal amount) {
+
+        Account account = accountRepository.findById(accountNumber)
+                .orElse(null);
+
+        if (account == null) {
+            return null;
+        }
+
+        account.withdraw(amount);
 
         return accountRepository.save(account);
     }
