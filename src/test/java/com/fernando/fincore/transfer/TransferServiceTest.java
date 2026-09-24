@@ -2,6 +2,7 @@ package com.fernando.fincore.transfer;
 
 import com.fernando.fincore.account.Account;
 import com.fernando.fincore.account.AccountType;
+import com.fernando.fincore.transaction.TransactionService;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -25,10 +26,17 @@ public class TransferServiceTest {
 
         currentAccount.deposit(new BigDecimal("500.00"));
 
-        AccountRepository accountRepository = mock(AccountRepository.class);
+        AccountRepository accountRepository =
+                mock(AccountRepository.class);
+
+        TransactionService transactionService =
+                mock(TransactionService.class);
 
         TransferService transferService =
-                new TransferService(accountRepository);
+                new TransferService(
+                        accountRepository,
+                        transactionService
+                );
 
         transferService.transfer(
                 currentAccount,
@@ -58,10 +66,17 @@ public class TransferServiceTest {
 
         currentAccount.deposit(new BigDecimal("100.00"));
 
-        AccountRepository accountRepository = mock(AccountRepository.class);
+        AccountRepository accountRepository =
+                mock(AccountRepository.class);
+
+        TransactionService transactionService =
+                mock(TransactionService.class);
 
         TransferService transferService =
-                new TransferService(accountRepository);
+                new TransferService(
+                        accountRepository,
+                        transactionService
+                );
 
         assertThrows(
                 IllegalArgumentException.class,

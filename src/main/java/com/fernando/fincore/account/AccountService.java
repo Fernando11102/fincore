@@ -1,16 +1,23 @@
 package com.fernando.fincore.account;
-
+import com.fernando.fincore.transaction.TransactionService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.math.BigDecimal;
+import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AccountService {
-    private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    private final AccountRepository accountRepository;
+    private final TransactionService transactionService;
+
+    public AccountService(
+            AccountRepository accountRepository,
+            TransactionService transactionService) {
+
         this.accountRepository = accountRepository;
+        this.transactionService = transactionService;
     }
 
     public List<Account> getAccounts() {
@@ -21,6 +28,7 @@ public class AccountService {
         return accountRepository.findById(accountNumber)
                 .orElse(null);
     }
+
     public Account createAccount(CreateAccountRequest request) {
 
         if (accountRepository.existsById(request.accountNumber())) {
@@ -34,6 +42,8 @@ public class AccountService {
 
         return accountRepository.save(account);
     }
+
+    @Transactional
     public Account deposit(String accountNumber, BigDecimal amount) {
 
         Account account = accountRepository.findById(accountNumber)
@@ -45,8 +55,17 @@ public class AccountService {
 
         account.deposit(amount);
 
-        return accountRepository.save(account);
+        Account savedAccount = accountRepository.save(account);
+
+        transactionService.recordDeposit(
+                accountNumber,
+                amount
+        );
+
+        return savedAccount;
     }
+
+    @Transactional
     public Account withdraw(String accountNumber, BigDecimal amount) {
 
         Account account = accountRepository.findById(accountNumber)
@@ -58,6 +77,13 @@ public class AccountService {
 
         account.withdraw(amount);
 
-        return accountRepository.save(account);
+        Account savedAccount = accountRepository.save(account);
+
+        transactionService.recordWithdrawal(
+                accountNumber,
+                amount
+        );
+
+        return savedAccount;
     }
 }

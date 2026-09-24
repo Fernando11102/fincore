@@ -6,14 +6,22 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 import com.fernando.fincore.account.AccountRepository;
 import org.springframework.transaction.annotation.Transactional;
+import com.fernando.fincore.transaction.TransactionService;
+import com.fernando.fincore.transaction.TransactionService;
 
 @Service
 public class TransferService {
 
     private final AccountRepository accountRepository;
+    private final TransactionService transactionService;
 
-    public TransferService(AccountRepository accountRepository) {
+
+    public TransferService(
+            AccountRepository accountRepository,
+            TransactionService transactionService) {
+
         this.accountRepository = accountRepository;
+        this.transactionService = transactionService;
     }
 
     public void transfer(
@@ -52,6 +60,12 @@ public class TransferService {
 
         accountRepository.save(fromAccount);
         accountRepository.save(toAccount);
+
+        transactionService.recordTransfer(
+                fromAccountNumber,
+                toAccountNumber,
+                amount
+        );
 
         return true;
     }
